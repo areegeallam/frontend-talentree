@@ -31,7 +31,7 @@ jobs:
         run: npm install --legacy-peer-deps
 
       - name: Build Angular
-        run: npx ng build --configuration production --base-href="/frontend-talentree/"
+        run: npx ng build --configuration production --base-href="/frontend-talentree/" --optimization=false --source-map=false
 
       - name: Add .nojekyll
         run: echo "" > dist/talentree/browser/.nojekyll
