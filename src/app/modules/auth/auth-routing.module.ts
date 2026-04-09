@@ -1,7 +1,7 @@
 import { RegisterBusinessownerComponent } from './register-businessowner/register-businessowner.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-//import { AuthLandingComponent } from './auth-landing/auth-landing.component';
+import { AuthLandingComponent } from './auth-landing/auth-landing.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { VerifyEmailComponent } from './verify-email/verify-email.component';

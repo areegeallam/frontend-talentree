@@ -1,24 +1,26 @@
-import { Component } from '@angular/core';
+import { MaterialCartService } from './../../core/services/material-cart.service';
+import { FormsModule } from '@angular/forms';
+import { MaterialService } from './../../core/services/material.service';
+import { AuthService } from './../../../auth/services/auth.service';
+import { Material } from './../../core/interfaces/material';
+import { Component, inject } from '@angular/core';
 import { ProductCardComponent } from "../../components/product-card/product-card.component";
 import { CarouselModule, OwlOptions } from 'ngx-owl-carousel-o';
-interface RawMaterialItem {
-  name: string;
-  type: string;
-  minQty: number;
-  price: string;
-  colors: string;
-  vendor: string;
-  image: string;
-  title:string;
-}
+import { Subscription } from 'rxjs';
+import { log } from 'node:console';
+import { RouterLink } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+
 @Component({
   selector: 'app-raw-material-home',
   standalone: true,
-  imports: [ProductCardComponent,CarouselModule],
+  imports: [ProductCardComponent,CarouselModule, FormsModule , RouterLink],
   templateUrl: './raw-material-home.component.html',
   styleUrl: './raw-material-home.component.css'
 })
 export class RawMaterialHomeComponent {
+  constructor(private _MaterialService:MaterialService , private _MaterialCartService:MaterialCartService){}
+  private readonly _ToastrService =inject(ToastrService)
   //owl caroseal options
   customOptions: OwlOptions = {
     loop: true,
@@ -33,132 +35,97 @@ export class RawMaterialHomeComponent {
     items:1,
     nav: true,
   }
+
+  //objects
+  materials :Material[] =[];
+  pageIndex :number =1 ;
+  pageSize:number =20;
+  materialId!:number;
+  totalCount!:number ;
+  totalPages! :number ;
+
+  hasNext !:boolean;
+  hasPrevious!: boolean;
+  
+  materialSub!:Subscription;
   // Filter fields (bound to inputs)
   searchName = '';
+  categoryChoise='';
   searchVendor = '';
   minQtyFilter: number | null = null;
+  ngOnInit():void{
+    this.loadMaterials()
+  }
+  loadMaterials(){
+    
+    this.materialSub=this._MaterialService.getMaterials({ category: this.categoryChoise,'search':this.searchName, pageIndex: this.pageIndex, pageSize: this.pageSize }).subscribe({
+      next:(res)=>{
+        this.materials=res.data.data;
+        this.totalCount = res.data.count;
+        this.totalPages = res.data.totalPages;
+        this.hasNext=res.data.hasNext;
+        this.hasPrevious=res.data.hasPrevious;
+        this.materialId = res.data.data[0].id;
+        console.log(res)},
+      error:(err)=>{console.log(err);
+      }
+    })
+  }
 
-  // All items
-  items: RawMaterialItem[] = [
-    {
-      name: 'Nylon 6,6',
-      type: 'Synthetic',
-      minQty: 500,
-      price: '$4.80 / m',
-      colors: 'Black, Navy',
-      vendor: 'TexSupplies',
-      image:
-        'https://i.pinimg.com/1200x/b7/af/82/b7af82c2cd99a76f1020746e5eeaae2c.jpg',
-      title:'cotton dress'
-    },
-    {
-      name: 'Organic Cotton Knit',
-      type: 'Natural',
-      minQty: 300,
-      price: '$3.10 / m',
-      colors: 'White, Cream',
-      vendor: 'GreenFiber Co.',
-      image:
-        'https://i.pinimg.com/1200x/f8/ff/a8/f8ffa8318021e19de6f350998f637115.jpg',
-      title:'cotton dress'
-    },
-    {
-      name: 'Polyester Satin',
-      type: 'Synthetic',
-      minQty: 800,
-      price: '$2.60 / m',
-      colors: 'Emerald, Royal Blue',
-      vendor: 'ShineTex Global',
-      image:
-        'https://i.pinimg.com/736x/23/d2/22/23d2225c1d5f995ba53a8ca04f8bf898.jpg',
-      title:'cotton dress'
-    },
-    {
-      name: 'Rayon Challis',
-      type: 'Semi-synthetic',
-      minQty: 400,
-      price: '$3.80 / m',
-      colors: 'Olive, Mustard',
-      vendor: 'SoftWeave Mills',
-      image:
-        'https://i.pinimg.com/736x/23/d2/22/23d2225c1d5f995ba53a8ca04f8bf898.jpg',
-      title:'cotton dress'
-    },
-    {
-      name: 'Linen Blend',
-      type: 'Natural Blend',
-      minQty: 200,
-      price: '$5.20 / m',
-      colors: 'Natural, Stone',
-      vendor: 'Heritage Looms',
-      image:
-        'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80',
-      title:'cotton dress'
-    },
-    {
-      name: 'Microfiber Twill',
-      type: 'Synthetic',
-      minQty: 600,
-      price: '$4.10 / m',
-      colors: 'Charcoal, Steel Blue',
-      vendor: 'Precision Textiles',
-      image:
-        'https://images.unsplash.com/photo-1514996937319-344454492b37?auto=format&fit=crop&w=800&q=80',
-      title:'cotton dress'
-    },
-    {
-      name: 'Bamboo Jersey',
-      type: 'Natural',
-      minQty: 250,
-      price: '$4.50 / m',
-      colors: 'Forest, Slate',
-      vendor: 'EcoBlend Fabrics',
-      image:
-        'https://images.unsplash.com/photo-1582719478584-6a85f2baf44d?auto=format&fit=crop&w=800&q=80',
-      title:'cotton dress'
-    },
-    {
-      name: 'Recycled PET Fleece',
-      type: 'Recycled',
-      minQty: 700,
-      price: '$3.90 / m',
-      colors: 'Heather Grey, Black',
-      vendor: 'LoopCycle Textiles',
-      image:
-        'https://images.unsplash.com/photo-1616309275760-c81c8e8d5c5b?auto=format&fit=crop&w=800&q=80',
-      title:'cotton dress'
+  nextPage(){
+    if(this.pageIndex<this.totalPages){
+      this.pageIndex++;
+      this.loadMaterials()
     }
-  ];
-
-  // Items after filtering
-  filteredItems: RawMaterialItem[] = [...this.items];
-
-  /** Called when user clicks the Filter button */
-  applyFilters(): void {
-    const name = this.searchName.trim().toLowerCase();
-    const vendor = this.searchVendor.trim().toLowerCase();
-    const minQty = this.minQtyFilter;
-
-    this.filteredItems = this.items.filter(item => {
-      const matchesName =
-        !name || item.name.toLowerCase().includes(name);
-
-      const matchesVendor =
-        !vendor || item.vendor.toLowerCase().includes(vendor);
-
-      const matchesQty =
-        minQty == null || item.minQty >= minQty;
-
-      return matchesName && matchesVendor && matchesQty;
-    });
+  }
+  previousPage(){
+    if(this.pageIndex>1){
+      this.pageIndex--;
+      this.loadMaterials();
+    }
   }
 
-  /** Optional: clear all filters */
-  clearFilters(): void {
-    this.searchName = '';
-    this.searchVendor = '';
-    this.minQtyFilter = null;
-    this.filteredItems = [...this.items];
+  goToPage(page: number) {
+  this.pageIndex = page;      // تحديث الصفحة الحالية
+  this.loadMaterials();            // تحميل البيانات الخاصة بالصفحة الجديدة
+}
+
+  applyFilterName(){
+    this.loadMaterials();
   }
+
+
+  //Add to Cart
+  addMaterialToCart = (id: number, quantity: number) => {
+  this._MaterialCartService.addMaterialToCart(id, quantity).subscribe({
+    next:(res)=>{
+      console.log('post res', res);
+      this._ToastrService.success(res.message , 'Talentree' , {timeOut:2000 , closeButton:true})
+    },
+    error:(err)=>{
+      console.log(err);
+      const errorMessage =
+        err?.error?.errors && err.error.errors.length > 0
+          ? err.error.errors[0]
+          : 'An unexpected error occurred';
+
+      this._ToastrService.error(errorMessage, 'Talentree', {
+        timeOut: 2000,
+        closeButton: true
+      });
+    }
+  })
+}
+  ngOnDestroy(){
+    this.materialSub?.unsubscribe();
+  }
+  
+
+  
+  
+
+  
+
+  
 }
 

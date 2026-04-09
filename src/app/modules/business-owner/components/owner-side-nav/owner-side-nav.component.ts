@@ -1,10 +1,10 @@
 import { Component, Input } from '@angular/core';
-import { BusinessOwnerRoutingModule } from '../../business-owner-routing.module';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-owner-side-nav',
   standalone: true,
-  imports: [BusinessOwnerRoutingModule],
+  imports: [RouterLink, RouterLinkActive],
   templateUrl: './owner-side-nav.component.html',
   styleUrl: './owner-side-nav.component.css'
 })

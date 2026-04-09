@@ -1,4 +1,6 @@
-import { Component, output } from '@angular/core';
+import { Component,  output,  Output } from '@angular/core';
+import { EventEmitter } from 'node:stream';
+
 
 @Component({
   selector: 'app-owner-top-nav',
@@ -8,11 +10,13 @@ import { Component, output } from '@angular/core';
   styleUrl: './owner-top-nav.component.css'
 })
 export class OwnerTopNavComponent {
-  toggleSidebar = output<void>();
-  isOpen: boolean = false;
-  
-  toggle() {
+  toggleSidebar =output<void>();
+  isOpen:boolean=false;
+  toggle(){
     this.toggleSidebar.emit();
-    this.isOpen = !this.isOpen;
+    this.isOpen=!this.isOpen;
   }
+
+  
+  
 }

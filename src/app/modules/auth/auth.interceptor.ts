@@ -1,3 +1,4 @@
+
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthService } from '../../modules/auth/services/auth.service';
@@ -33,11 +34,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const token = authService.getToken();
   
   // إذا لم يكن هناك token وكان الطلب يحتاج إليه
-  // if (!token) {
-  //   console.warn('⚠️ No token found for protected route');
-  //   router.navigate(['/auth/login']);
-  //   return throwError(() => new Error('No authentication token'));
-  // }
+  if (!token) {
+    console.warn('⚠️ No token found for protected route');
+    router.navigate(['/auth/login']);
+    return throwError(() => new Error('No authentication token'));
+  }
   
   // إضافة الـ token للـ headers
   const authReq = req.clone({

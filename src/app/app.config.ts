@@ -15,8 +15,7 @@ export const appConfig: ApplicationConfig = {
     provideToastr(),
     provideHttpClient(
       withFetch(), // ✅ Add this for SSR compatibility
-      // withInterceptors([authInterceptor]) //"Hey Angular, before sending any HTTP request, run this interceptor."
-      
+      withInterceptors([authInterceptor]) 
     ),
     
     {

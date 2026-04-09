@@ -1,4 +1,6 @@
+import { RegisterBusinessownerComponent } from './register-businessowner/register-businessowner.component';
 import { AuthComponent } from './../../layout/auth/auth.component';
+import { AuthLandingComponent } from './auth-landing/auth-landing.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -14,6 +16,7 @@ import { VerifyEmailComponent } from './verify-email/verify-email.component';
 @NgModule({
   imports: [
     AuthComponent,
+    AuthLandingComponent,
     ForgotPasswordComponent,
     CommonModule,
     ReactiveFormsModule,
@@ -22,7 +25,8 @@ import { VerifyEmailComponent } from './verify-email/verify-email.component';
     // Import standalone components here
     LoginComponent,
     RegisterComponent,
-    VerifyEmailComponent
+    VerifyEmailComponent,
+    RegisterBusinessownerComponent
   ]
 })
 export class AuthModule { }

@@ -4,7 +4,7 @@
     <!-- Gallery -->
     <div class="gallery">
       <div class="hero-img">
-        <img src="https://i.pinimg.com/736x/23/d2/22/23d2225c1d5f995ba53a8ca04f8bf898.jpg" alt="Material main" />
+        <img [src]="materialDetails.pictureUrl" alt="Material main" />
       </div>
       <div class="thumbs">
         <img src="https://i.pinimg.com/1200x/3a/be/7f/3abe7f96a9ac68e4422b04732d5bdb00.jpg" alt="thumb 1" />
@@ -16,25 +16,30 @@
     <!-- Details -->
     <div class="details">
       <div class="title-row">
-        <h1>High GSM Knit – Anti-Pill Fleece – Polar Green</h1>
-        <span class="tag">In Stock</span>
+        <h1>{{materialDetails.name}}</h1>
+        @if(materialDetails.isAvailable){
+          <span class="tag">In Stock</span>
+        }
+        @else {
+          <span class="tag">Out Of Stock</span>
+        }
+        
       </div>
-      <p class="supplier">Supplier: <strong>TexSupplies Ltd.</strong> · Rating: ⭐⭐⭐⭐☆ (4.2)</p>
+      <p class="supplier">Supplier: <strong>{{materialDetails.supplierName}}</strong> · Rating: ⭐⭐⭐⭐☆ (4.2)</p>
       <p class="desc">
-        Soft-touch fleece suitable for winter apparel. Anti-pill finish, high GSM for warmth,
-        easy-care with stable shrinkage.
+        {{materialDetails.description}}
       </p>
 
       <div class="price-block">
         <div>
-          <p class="price">Price: <strong>$5.20 / m</strong></p>
+          <p class="price">Price: <strong>${{materialDetails.price}} / {{materialDetails.unit}}</strong></p>
           <p class="note">Bulk discounts apply based on quantity tiers.</p>
         </div>
         <div class="qty">
           <label for="qtyInput">Quantity (meters)</label>
           <div class="qty-row">
             <button>-</button>
-            <input id="qtyInput" type="number" min="1" value="200" />
+            <input id="qtyInput" type="number" [min]="materialDetails.minimumOrderQuantity" [value]="quentity" [(ngModel)]="quentity" />
             <button>+</button>
           </div>
         </div>
@@ -88,7 +93,7 @@
       </div>
 
       <div class="cta-row">
-        <button class="btn primary">Add to Cart</button>
+        <button class="btn primary" (click)="addMaterialToCart()"   >Add to Cart</button>
         <button class="btn ghost">Buy Now</button>
       </div>
     </div>

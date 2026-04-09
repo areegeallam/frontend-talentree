@@ -41,7 +41,7 @@ export class LoginComponent {
       rememberMe: [false]
     });
 
-    const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/admin/dashboard';
+    const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
     this.storageService.setItem('returnUrl', returnUrl, { prefix: 'auth_' });
   }
 
@@ -72,12 +72,6 @@ export class LoginComponent {
         this.successMessage = 'Login successful! Redirecting...';
         this.loginForm.patchValue({ password: '' });
         this.storageService.removeItem('pending_verification_email', { prefix: '' });
-
-        // في دالة onSubmit بعد نجاح login
-        const returnUrl = this.storageService.getItem('returnUrl', { prefix: 'auth_' }) || '/admin/dashboard';
-        setTimeout(() => {
-          this.router.navigateByUrl(returnUrl);
-        }, 1500);
       },
       error: (error) => {
         this.isLoading = false;
@@ -164,41 +158,41 @@ export class LoginComponent {
     console.log('🔵 Facebook login clicked');
   }
 
-  // =============== 🌐 SOCIAL LOGIN METHODS ===============
+// =============== 🌐 SOCIAL LOGIN METHODS ===============
 
-  onGoogleSuccess(response: any): void {
-    console.log('✅ Google login success from component', response);
-    this.isLoading = false;
-    this.successMessage = 'Login successful! Redirecting...';
+onGoogleSuccess(response: any): void {
+  console.log('✅ Google login success from component', response);
+  this.isLoading = false;
+  this.successMessage = 'Login successful! Redirecting...';
+  
+  const returnUrl = this.storageService.getItem('returnUrl', { prefix: 'auth_' }) || '/dashboard';
+  setTimeout(() => {
+    this.router.navigateByUrl(returnUrl);
+  }, 1500);
+}
 
-    const returnUrl = this.storageService.getItem('returnUrl', { prefix: 'auth_' }) || '/admin/dashboard';
-    setTimeout(() => {
-      this.router.navigateByUrl(returnUrl);
-    }, 1500);
-  }
+onGoogleError(error: any): void {
+  console.error('❌ Google login error', error);
+  this.isLoading = false;
+  this.errorMessage = error?.message || 'Google login failed. Please try again.';
+}
 
-  onGoogleError(error: any): void {
-    console.error('❌ Google login error', error);
-    this.isLoading = false;
-    this.errorMessage = error?.message || 'Google login failed. Please try again.';
-  }
+onFacebookSuccess(response: any): void {
+  console.log('✅ Facebook login success from component', response);
+  this.isLoading = false;
+  this.successMessage = 'Login successful! Redirecting...';
+  
+  const returnUrl = this.storageService.getItem('returnUrl', { prefix: 'auth_' }) || '/dashboard';
+  setTimeout(() => {
+    this.router.navigateByUrl(returnUrl);
+  }, 1500);
+}
 
-  onFacebookSuccess(response: any): void {
-    console.log('✅ Facebook login success from component', response);
-    this.isLoading = false;
-    this.successMessage = 'Login successful! Redirecting...';
-
-    const returnUrl = this.storageService.getItem('returnUrl', { prefix: 'auth_' }) || '/dashboard';
-    setTimeout(() => {
-      this.router.navigateByUrl(returnUrl);
-    }, 1500);
-  }
-
-  onFacebookError(error: any): void {
-    console.error('❌ Facebook login error', error);
-    this.isLoading = false;
-    this.errorMessage = error?.message || 'Facebook login failed. Please try again.';
-  }
+onFacebookError(error: any): void {
+  console.error('❌ Facebook login error', error);
+  this.isLoading = false;
+  this.errorMessage = error?.message || 'Facebook login failed. Please try again.';
+}
 
   // =============== 🔧 HELPER METHODS ===============
 

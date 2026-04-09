@@ -108,7 +108,7 @@
         @if(isExpanded && expandedItems['raw-material']){
         <ul class="submenu">
           <li><a (click)="setActive('store')" [class.active]="activeItem === 'store'" [routerLink]="['/businessowner/rawmaterialhome']">Store</a></li>
-          <li><a (click)="setActive('my-purchases')" [class.active]="activeItem === 'my-purchases'">My Purchases</a>
+          <li><a (click)="setActive('my-purchases')" [class.active]="activeItem === 'my-purchases'" [routerLink]="['/businessowner/rawmaterialcart']">My Purchases</a>
           </li>
         </ul>
         }

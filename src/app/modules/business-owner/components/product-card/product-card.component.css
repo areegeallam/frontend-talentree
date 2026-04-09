@@ -56,3 +56,29 @@
     margin: auto;
 }
 
+.qty {
+  display: inline-flex;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.qty button {
+  width: 34px;
+  border: none;
+  background: #f3f4f6;
+  cursor: pointer;
+  font-weight: 700;
+  color: #374151;
+  padding: 7px;
+}
+.qty button:hover{
+  background: #d9d9da;
+}
+.qty input {
+  width: 60px;
+  border: none;
+  text-align: center;
+  font-size: 14px;
+  outline: none;
+}

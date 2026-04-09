@@ -15,8 +15,7 @@ export const routes: Routes = [
   },
   {
     path: 'businessowner',
-    canActivate:[],
-    //  [authGuardGuard , roleGuardGuard],
+    canActivate:[authGuardGuard , roleGuardGuard],
     data: { roles: ['BusinessOwner'] },
     loadChildren: () =>
       import('./modules/business-owner/business-owner.module').then(bo => bo.BusinessOwnerModule)
