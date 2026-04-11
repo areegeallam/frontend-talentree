@@ -1,91 +1,58 @@
-// src/app/modules/admin/services/supplier.service.ts
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AuthService } from '../../../modules/auth/services/auth.service';
+import { ApiResponse, PaginatedResponse } from '../core/Interfaces/ibusiness-owner';
+import {
+  Supplier,
+  CreateSupplierDto,
+  UpdateSupplierDto,
+  SupplierFilterParams
+} from '../core/Interfaces/isupplier';
 
-export interface Supplier {
-  id: number;
-  name: string;
-  contactName?: string;
-  email?: string;
-  phone?: string;
-  address?: string;
-  isActive: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-export interface ApiResponse<T> {
-  success: boolean;
-  data: T;
-  message: string;
-  errors: string[];
-  timestamp: string;
-}
-
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class SupplierService {
-  private apiUrl: string;
 
-  constructor(
-    private http: HttpClient,
-    private authService: AuthService
-  ) {
-    this.apiUrl = this.authService.apiUrl;
+  constructor(private _HttpClient: HttpClient) {}
+
+  apiUrl = '/api/AdminSupplier';
+
+  // ── GET all ───────────────────────────────────────────────────────────────
+
+  getSuppliers(params?: SupplierFilterParams)
+    : Observable<ApiResponse<PaginatedResponse<Supplier>>> {
+    let httpParams = new HttpParams();
+    if (params) {
+      if (params.search)                httpParams = httpParams.set('search', params.search);
+      if (params.isActive !== undefined) httpParams = httpParams.set('isActive', params.isActive);
+      if (params.pageIndex)             httpParams = httpParams.set('pageIndex', params.pageIndex);
+      if (params.pageSize)              httpParams = httpParams.set('pageSize', params.pageSize);
+    }
+    return this._HttpClient.get<ApiResponse<PaginatedResponse<Supplier>>>(
+      this.apiUrl, { params: httpParams }
+    );
   }
 
-  /**
-   * GET /api/AdminSupplier - جلب كل الموردين
-   */
-  getAllSuppliers(params?: {
-    search?: string;
-    isActive?: boolean;
-    pageIndex?: number;
-    pageSize?: number;
-  }): Observable<ApiResponse<Supplier[]>> {
-    const url = `${this.apiUrl}/api/AdminSupplier`;
-    return this.http.get<ApiResponse<Supplier[]>>(url, { params });
-  }
+  // ── GET by id ─────────────────────────────────────────────────────────────
 
-  /**
-   * GET /api/AdminSupplier/{id} - جلب مورد واحد
-   */
   getSupplierById(id: number): Observable<ApiResponse<Supplier>> {
-    const url = `${this.apiUrl}/api/AdminSupplier/${id}`;
-    return this.http.get<ApiResponse<Supplier>>(url);
+    return this._HttpClient.get<ApiResponse<Supplier>>(`${this.apiUrl}/${id}`);
   }
 
-  /**
-   * POST /api/AdminSupplier - إضافة مورد جديد
-   */
-  createSupplier(supplierData: any): Observable<ApiResponse<Supplier>> {
-    const url = `${this.apiUrl}/api/AdminSupplier`;
-    return this.http.post<ApiResponse<Supplier>>(url, supplierData);
+  // ── POST create ───────────────────────────────────────────────────────────
+
+  createSupplier(dto: CreateSupplierDto): Observable<ApiResponse<Supplier>> {
+    return this._HttpClient.post<ApiResponse<Supplier>>(this.apiUrl, dto);
   }
 
-  /**
-   * PUT /api/AdminSupplier/{id} - تحديث مورد
-   */
-  updateSupplier(id: number, supplierData: any): Observable<ApiResponse<Supplier>> {
-    const url = `${this.apiUrl}/api/AdminSupplier/${id}`;
-    return this.http.put<ApiResponse<Supplier>>(url, supplierData);
+  // ── PUT update ────────────────────────────────────────────────────────────
+
+  updateSupplier(id: number, dto: UpdateSupplierDto): Observable<ApiResponse<Supplier>> {
+    return this._HttpClient.put<ApiResponse<Supplier>>(`${this.apiUrl}/${id}`, dto);
   }
 
-  /**
-   * DELETE /api/AdminSupplier/{id} - حذف مورد
-   */
-  deleteSupplier(id: number): Observable<ApiResponse<any>> {
-    const url = `${this.apiUrl}/api/AdminSupplier/${id}`;
-    return this.http.delete<ApiResponse<any>>(url);
-  }
+  // ── DELETE ────────────────────────────────────────────────────────────────
 
-  /**
-   * تفعيل/تعطيل مورد
-   */
-  toggleSupplierStatus(id: number, isActive: boolean): Observable<ApiResponse<Supplier>> {
-    return this.updateSupplier(id, { isActive });
+  deleteSupplier(id: number): Observable<ApiResponse<null>> {
+    return this._HttpClient.delete<ApiResponse<null>>(`${this.apiUrl}/${id}`);
   }
 }
