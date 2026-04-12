@@ -1,107 +1,78 @@
-// src/app/modules/admin/services/raw-material.service.ts
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AuthService } from '../../../modules/auth/services/auth.service'; 
+import { ApiResponse, PaginatedResponse } from '../core/Interfaces/ibusiness-owner';
+import {
+  RawMaterial,
+  CreateRawMaterialDto,
+  UpdateRawMaterialDto,
+  RestockMaterialDto,
+  RawMaterialFilterParams
+} from '../core/Interfaces/iraw-material';
 
-export interface RawMaterial {
-  id: number;
-  name: string;
-  description?: string;
-  category?: string;
-  price?: number;
-  unit?: string;
-  stockQuantity?: number;
-  isAvailable?: boolean;
-  supplierId?: number;
-  supplierName?: string;
-  imageUrl?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-export interface ApiResponse<T> {
-  success: boolean;
-  data: T;
-  message: string;
-  errors: string[];
-  timestamp: string;
-}
-
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class RawMaterialService {
-  private apiUrl: string;
 
-  constructor(
-    private http: HttpClient,
-    private authService: AuthService // ← حقن AuthService
-  ) {
-    this.apiUrl = this.authService.apiUrl; // ← استخدام apiUrl من AuthService
+  constructor(private _HttpClient: HttpClient) {}
+
+ apiUrl = 'https://backtalentree.runasp.net/api/AdminRawMaterial';
+  // ── GET all (with filters + pagination) ──────────────────────────────────
+
+  getRawMaterials(params?: RawMaterialFilterParams)
+    : Observable<ApiResponse<PaginatedResponse<RawMaterial>>> {
+    let httpParams = new HttpParams();
+    if (params) {
+      if (params.category)    httpParams = httpParams.set('category', params.category);
+      if (params.search)      httpParams = httpParams.set('search', params.search);
+      if (params.isAvailable !== undefined)
+                              httpParams = httpParams.set('isAvailable', params.isAvailable);
+      if (params.pageIndex)   httpParams = httpParams.set('pageIndex', params.pageIndex);
+      if (params.pageSize)    httpParams = httpParams.set('pageSize', params.pageSize);
+    }
+    return this._HttpClient.get<ApiResponse<PaginatedResponse<RawMaterial>>>(
+      this.apiUrl, { params: httpParams }
+    );
   }
 
-  /**
-   * GET /api/AdminRawMaterial - جلب كل المواد الخام
-   */
-  getAllMaterials(params?: {
-    category?: string;
-    search?: string;
-    isAvailable?: boolean;
-    pageIndex?: number;
-    pageSize?: number;
-  }): Observable<ApiResponse<RawMaterial[]>> {
-    const url = `${this.apiUrl}/api/AdminRawMaterial`;
-    return this.http.get<ApiResponse<RawMaterial[]>>(url, { params });
+  // ── GET by id ─────────────────────────────────────────────────────────────
+
+  getRawMaterialById(id: number): Observable<ApiResponse<RawMaterial>> {
+    return this._HttpClient.get<ApiResponse<RawMaterial>>(`${this.apiUrl}/${id}`);
   }
 
-  /**
-   * GET /api/AdminRawMaterial/{id} - جلب مادة خام واحدة
-   */
-  getMaterialById(id: number): Observable<ApiResponse<RawMaterial>> {
-    const url = `${this.apiUrl}/api/AdminRawMaterial/${id}`;
-    return this.http.get<ApiResponse<RawMaterial>>(url);
+  // ── POST create ───────────────────────────────────────────────────────────
+
+  createRawMaterial(dto: CreateRawMaterialDto): Observable<ApiResponse<RawMaterial>> {
+    return this._HttpClient.post<ApiResponse<RawMaterial>>(this.apiUrl, dto);
   }
 
-  /**
-   * POST /api/AdminRawMaterial - إضافة مادة خام جديدة
-   */
-  createMaterial(materialData: any): Observable<ApiResponse<RawMaterial>> {
-    const url = `${this.apiUrl}/api/AdminRawMaterial`;
-    return this.http.post<ApiResponse<RawMaterial>>(url, materialData);
+  // ── PUT update ────────────────────────────────────────────────────────────
+
+  updateRawMaterial(id: number, dto: UpdateRawMaterialDto): Observable<ApiResponse<RawMaterial>> {
+    return this._HttpClient.put<ApiResponse<RawMaterial>>(`${this.apiUrl}/${id}`, dto);
   }
 
-  /**
-   * PUT /api/AdminRawMaterial/{id} - تحديث مادة خام
-   */
-  updateMaterial(id: number, materialData: any): Observable<ApiResponse<RawMaterial>> {
-    const url = `${this.apiUrl}/api/AdminRawMaterial/${id}`;
-    return this.http.put<ApiResponse<RawMaterial>>(url, materialData);
+  // ── DELETE ────────────────────────────────────────────────────────────────
+
+  deleteRawMaterial(id: number): Observable<ApiResponse<null>> {
+    return this._HttpClient.delete<ApiResponse<null>>(`${this.apiUrl}/${id}`);
   }
 
-  /**
-   * DELETE /api/AdminRawMaterial/{id} - حذف مادة خام
-   */
-  deleteMaterial(id: number): Observable<ApiResponse<any>> {
-    const url = `${this.apiUrl}/api/AdminRawMaterial/${id}`;
-    return this.http.delete<ApiResponse<any>>(url);
+  // ── PATCH restock ─────────────────────────────────────────────────────────
+
+  restockMaterial(id: number, dto: RestockMaterialDto): Observable<ApiResponse<RawMaterial>> {
+    return this._HttpClient.patch<ApiResponse<RawMaterial>>(
+      `${this.apiUrl}/${id}/restock`, dto
+    );
   }
 
-  /**
-   * PATCH /api/AdminRawMaterial/{id}/restock - إعادة تخزين
-   */
-  restockMaterial(id: number, quantity: number): Observable<ApiResponse<RawMaterial>> {
-    const url = `${this.apiUrl}/api/AdminRawMaterial/${id}/restock`;
-    return this.http.patch<ApiResponse<RawMaterial>>(url, { quantity });
-  }
+  // ── POST upload image ─────────────────────────────────────────────────────
 
-  /**
-   * POST /api/AdminRawMaterial/{id}/upload-image - رفع صورة
-   */
-  uploadImage(id: number, file: File): Observable<ApiResponse<any>> {
-    const url = `${this.apiUrl}/api/AdminRawMaterial/${id}/upload-image`;
+  uploadImage(id: number, file: File): Observable<ApiResponse<null>> {
     const formData = new FormData();
     formData.append('image', file);
-    return this.http.post<ApiResponse<any>>(url, formData);
+    return this._HttpClient.post<ApiResponse<null>>(
+      `${this.apiUrl}/${id}/upload-image`, formData
+    );
   }
 }
