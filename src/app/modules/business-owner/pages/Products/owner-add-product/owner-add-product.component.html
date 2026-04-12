@@ -19,8 +19,15 @@
   </div>
 
 
-<input #fileInput type="file" accept="image/*" multiple hidden
-  (change)="handleFileSelect($event)" />
+<input
+  #fileInput
+  id="fileInput"
+  type="file"
+  accept="image/*"
+  multiple
+  hidden
+  (change)="handleFileSelect($event)"
+/>
 
   <!-- success toast -->
   <div class="ap-toast ap-toast--success" id="successToast" style="display:none">
@@ -46,12 +53,14 @@
           <i class="fa-regular fa-image"></i> Product Images
         </div>
 
-        <!-- Drop zone -->
-        <div class="ap-upload-zone" id="uploadZone"
-          onclick="document.getElementById('fileInput').click()"
-          ondragover="onDragOver(event)"
-          ondragleave="onDragLeave(event)"
-          ondrop="onDrop(event)">
+        <!-- Drop zone — one file input + Angular handlers so files reach selectedFiles[] -->
+        <div
+          class="ap-upload-zone"
+          id="uploadZone"
+          (click)="fileInput.click()"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event)">
           <div class="ap-upload-zone__icon">
             <i class="fa-solid fa-cloud-arrow-up"></i>
           </div>
@@ -59,11 +68,9 @@
           <p class="ap-upload-zone__sub">Drag &amp; drop files here, or <span class="ap-link">browse</span></p>
           <p class="ap-upload-zone__hint">PNG, JPG, WEBP — max 10 MB each</p>
         </div>
-        <input type="file" id="fileInput" accept="image/*" multiple style="display:none"
-          onchange="handleFileSelect(event)" />
 
         <!-- Image previews -->
-        <div class="ap-preview-grid" id="previewGrid"></div>
+        <div class="ap-preview-grid ap-preview-grid--stack" id="previewGrid"></div>
       </div>
 
       <!-- ② PRODUCT INFORMATION ──────────────── -->
@@ -78,6 +85,7 @@
           </label>
           <input class="input-main mt-1 mb-1 " id="productName" type="text"
             placeholder="e.g. Classic Leather Sneakers"
+            (input)="refreshSummary()"
             oninput="clearError('productName')" />
           <span class="ap-error" id="err-productName"></span>
         </div>
@@ -96,7 +104,7 @@
                 <span>Category</span>
                <span class="ap-required">*</span>
             </label>
-            <select class="select-main mt-1 mb-1 " id="category" onchange="clearError('category')">
+            <select class="select-main mt-1 mb-1 " id="category" (change)="refreshSummary()" onchange="clearError('category')">
               <option value="" color="var(--muted)">Select category…</option>
               <option>Electronics</option>
               <option>Clothing &amp; Apparel</option>
@@ -116,25 +124,27 @@
           
 
           <div class="ap-form-group">
-            <label class="feild" for="price">
+            <label class="feild" for="costPrice">
               Cost price (USD) <span class="ap-required">*</span>
             </label>
             <div class="ap-input-prefix">
               <span class="ap-input-prefix__symbol">$</span>
-              <input class="input-main mt-1 mb-1 ap-input--prefixed" id="price" type="number"
+              <input class="input-main mt-1 mb-1 ap-input--prefixed" id="costPrice" type="number"
                 min="0" step="0.01" placeholder="0.00"
+                (input)="refreshSummary()"
                 oninput="clearError('price')" />
             </div>
-            <span class="ap-error" id="err-price"></span>
+            <span class="ap-error" id="err-costPrice"></span>
           </div>
                 <div class="ap-form-group">
-            <label class="feild" for="price">
+            <label class="feild" for="sellingPrice">
               selling price (USD) <span class="ap-required">*</span>
             </label>
             <div class="ap-input-prefix">
               <span class="ap-input-prefix__symbol">$</span>
-              <input class="input-main mt-1 mb-1 ap-input--prefixed" id="price" type="number"
+              <input class="input-main mt-1 mb-1 ap-input--prefixed" id="sellingPrice" type="number"
                 min="0" step="0.01" placeholder="0.00"
+                (input)="refreshSummary()"
                 oninput="clearError('price')" />
             </div>
             <span class="ap-error" id="err-price"></span>
@@ -151,11 +161,13 @@
         <div class="ap-row">
           <div class="ap-form-group">
             <label class="feild" for="quantity">Quantity / Stock</label>
-            <input class="input-main mt-1 mb-1" id="quantity" type="number" min="0" placeholder="e.g. 100" />
+            <input class="input-main mt-1 mb-1" id="quantity" type="number" min="0" placeholder="e.g. 100"
+              (input)="refreshSummary()" />
           </div>
           <div class="ap-form-group">
             <label class="feild" for="brand">Brand Name</label>
-            <input class="input-main mt-1 mb-1" id="brand" type="text" placeholder="e.g. Nike" />
+            <input class="input-main mt-1 mb-1" id="brand" type="text" placeholder="e.g. Nike"
+              (input)="refreshSummary()" />
           </div>
           <div class="ap-form-group">
             <label class="feild" for="sku">SKU</label>
@@ -201,7 +213,7 @@
               <p class="ap-toggle-row__sub">Offer free shipping for this product</p>
             </div>
             <label class="ap-toggle">
-              <input type="checkbox" id="freeShipping" onchange="refreshSummary()" />
+              <input type="checkbox" id="freeShipping" (change)="refreshSummary()" />
               <span class="ap-toggle__slider"></span>
             </label>
           </div>
@@ -214,7 +226,7 @@
               <p class="ap-toggle-row__sub">Automatically manage stock levels</p>
             </div>
             <label class="ap-toggle">
-              <input type="checkbox" id="trackInventory" checked onchange="refreshSummary()" />
+              <input type="checkbox" id="trackInventory" checked (change)="refreshSummary()" />
               <span class="ap-toggle__slider"></span>
             </label>
           </div>
@@ -227,7 +239,7 @@
               <p class="ap-toggle-row__sub">Highlight this product on the storefront</p>
             </div>
             <label class="ap-toggle">
-              <input type="checkbox" id="featured" onchange="refreshSummary()" />
+              <input type="checkbox" id="featured" (change)="refreshSummary()" />
               <span class="ap-toggle__slider"></span>
             </label>
           </div>

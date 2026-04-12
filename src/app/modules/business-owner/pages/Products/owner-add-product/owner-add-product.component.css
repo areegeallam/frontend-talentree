@@ -181,6 +181,44 @@
 }
 .ap-preview-item__remove:hover { background: var(--ap-error); }
 
+/* Stacked thumbnails — small, overlapping like a deck */
+.ap-preview-grid--stack {
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0;
+  overflow-x: auto;
+  overflow-y: visible;
+  padding: 10px 6px 12px;
+  margin-top: 16px;
+  -webkit-overflow-scrolling: touch;
+}
+.ap-preview-grid--stack .ap-preview-item {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  margin-left: -16px;
+  border: 2px solid var(--ap-surface);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.ap-preview-grid--stack .ap-preview-item:first-child {
+  margin-left: 0;
+}
+.ap-preview-grid--stack .ap-preview-item:hover {
+  z-index: 30;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+}
+.ap-preview-grid--stack .ap-preview-item__remove {
+  width: 18px;
+  height: 18px;
+  top: 2px;
+  right: 2px;
+  font-size: 10px;
+}
+
 /* ── Form helpers ─────────────────────────── */
 .ap-form-group { display: flex; flex-direction: column; }
 .ap-form-group + .ap-form-group { margin-top: 0; }

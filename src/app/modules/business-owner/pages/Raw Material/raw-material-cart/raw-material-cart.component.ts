@@ -1,8 +1,8 @@
 import { Subscription } from 'rxjs';
-import { MaterialCartService } from './../../core/services/material-cart.service';
+import { MaterialCartService } from '../../../core/services/material-cart.service';
 import { Component } from '@angular/core';
-import { ApiResponse } from '../../core/interfaces/material';
-import { BasketData, BasketItem } from '../../core/interfaces/imaterial-cart';
+import { ApiResponse } from '../../../core/interfaces/material';
+import { BasketData, BasketItem } from '../../../core/interfaces/imaterial-cart';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({

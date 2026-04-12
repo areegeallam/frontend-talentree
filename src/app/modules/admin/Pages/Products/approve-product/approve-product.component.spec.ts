@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { OwnerAddProductComponent } from './owner-add-product.component';
+import { ApproveProductComponent } from './approve-product.component';
 
-describe('OwnerAddProductComponent', () => {
-  let component: OwnerAddProductComponent;
-  let fixture: ComponentFixture<OwnerAddProductComponent>;
+describe('ApproveProductComponent', () => {
+  let component: ApproveProductComponent;
+  let fixture: ComponentFixture<ApproveProductComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [OwnerAddProductComponent]
+      imports: [ApproveProductComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(OwnerAddProductComponent);
+    fixture = TestBed.createComponent(ApproveProductComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

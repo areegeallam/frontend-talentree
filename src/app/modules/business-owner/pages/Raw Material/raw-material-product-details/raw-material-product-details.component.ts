@@ -1,7 +1,7 @@
-import { MaterialCartService } from './../../core/services/material-cart.service';
-import { Material } from './../../core/interfaces/material';
+import { MaterialCartService } from '../../../core/services/material-cart.service';
+import { Material } from '../../../core/interfaces/material';
 import { ActivatedRoute } from '@angular/router';
-import { MaterialService } from './../../core/services/material.service';
+import { MaterialService } from '../../../core/services/material.service';
 import { Component } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';

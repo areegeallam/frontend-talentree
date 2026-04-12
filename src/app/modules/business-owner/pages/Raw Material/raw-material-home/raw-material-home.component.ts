@@ -1,10 +1,10 @@
-import { MaterialCartService } from './../../core/services/material-cart.service';
+import { MaterialCartService } from '../../../core/services/material-cart.service';
 import { FormsModule } from '@angular/forms';
-import { MaterialService } from './../../core/services/material.service';
-import { AuthService } from './../../../auth/services/auth.service';
-import { Material } from './../../core/interfaces/material';
+import { MaterialService } from '../../../core/services/material.service';
+import { AuthService } from '../../../../auth/services/auth.service';
+import { Material } from '../../../core/interfaces/material';
 import { Component, inject } from '@angular/core';
-import { ProductCardComponent } from "../../components/product-card/product-card.component";
+import { ProductCardComponent } from "../../../components/product-card/product-card.component";
 import { CarouselModule, OwlOptions } from 'ngx-owl-carousel-o';
 import { Subscription } from 'rxjs';
 import { log } from 'node:console';
